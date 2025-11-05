@@ -68,7 +68,7 @@ function renderPage(doc, exists) {
 <header class="topbar">
   <div class="container nav">
     <div class="brand">
-      <img src="${LOGO_URL}" alt="Logo ULDC">
+      <img src="https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png" alt="Logo ULDC">
       <span>Universidad Escuela Libre de Derecho</span>
     </div>
     <nav class="navlinks">
@@ -143,4 +143,3 @@ app.get('/v/:id', async (req, res) => {
     return res.status(500).send(renderPage(null, false));
   }
 });
-
