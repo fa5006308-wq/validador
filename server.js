@@ -44,13 +44,24 @@ function pageResult(doc, codeBuscado) {
   const code   = doc?.code ?? codeBuscado ?? '—';
   const cedula = doc?.cedula ?? '—';
   const cert   = doc?.certificado ?? doc?.taller ?? '—';
-  const fecha  = doc?.fecha_emision ? new Date(doc.fecha_emision).toLocaleDateString('es-CR') : '—';
-  const folio  = doc?.folio ?? '—';
+
+  // solo mostramos si existen; si no, se ocultan por completo
+  const fechaHas = !!doc?.fecha_emision;
+  const folioHas = !!(doc?.folio && String(doc.folio).trim());
+  const fechaStr = fechaHas ? new Date(doc.fecha_emision).toLocaleDateString('es-CR') : '';
+  const folioStr = folioHas ? String(doc.folio) : '';
+
   const upd    = doc?.last_update ? new Date(doc.last_update).toLocaleString('es-CR') : '—';
 
-  // Logo blanco oficial (clickeable a uescuelalibre.cr)
+  // Logo blanco oficial (clickeable a uescuelalibre.cr) SIN placa de fondo
   const LOGO = 'https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png';
   const SITE = 'https://uescuelalibre.cr/';
+
+  // bloque extra (fecha/folio) solo si hay alguno
+  let extraRows = '';
+  if (fechaHas) extraRows += `<div class="row"><div class="k">Fecha de emisión</div><div class="v">${fechaStr}</div></div>`;
+  if (folioHas) extraRows += `<div class="row"><div class="k">Folio</div><div class="v">${folioStr}</div></div>`;
+  const extraBlock = extraRows ? `<div class="hr"></div><div class="kv">${extraRows}</div>` : '';
 
   return `<!doctype html>
 <html lang="es">
@@ -68,7 +79,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 .topbar{position:sticky;top:0;z-index:10;background:linear-gradient(90deg,var(--vino),var(--azul));color:#fff}
 .nav{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:14px;height:68px;padding:0 16px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:800}
-.brand-logo{height:40px;width:auto;display:block}    /* SIN fondo/placa */
+.brand-logo{height:40px;width:auto;display:block}    /* sin placa */
 .brandbar{height:4px;background:linear-gradient(90deg,var(--amarillo),var(--vino2),var(--azul))}
 .navlinks{margin-left:auto;display:flex;gap:18px}    /* vacío: sin enlaces */
 
@@ -110,11 +121,9 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         <div class="row"><div class="k">Cédula</div><div class="v">${cedula}</div></div>
         <div class="row"><div class="k">Certificado / Taller</div><div class="v">${cert}</div></div>
       </div>
-      <div class="hr"></div>
-      <div class="kv">
-        <div class="row"><div class="k">Fecha de emisión</div><div class="v">${fecha}</div></div>
-        <div class="row"><div class="k">Folio</div><div class="v">${folio}</div></div>
-      </div>
+
+      ${extraBlock}
+
       <div class="meta"><span class="badge-soft">Última actualización: ${upd}</span></div>
     </div>
     <div class="footer">© Universidad Escuela Libre de Derecho — Verificación de títulos</div>
