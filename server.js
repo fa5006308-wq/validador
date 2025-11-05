@@ -95,7 +95,7 @@ header a:hover{opacity:1}
 <body>
 <header>
   <div class="brand">
-    <img src="${process.env.LOGO_URL || 'https://upload.wikimedia.org/wikipedia/commons/8/89/OOjs_UI_icon_article-ltr.svg'}" alt="ULDC">
+    <img src="${process.env.LOGO_URL || 'https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png'}" alt="ULDC">
     <div>Universidad Escuela Libre de Derecho</div>
   </div>
   <nav>
@@ -152,6 +152,3 @@ app.get('/v/:id', guard(async (req, res) => {
 }));
 
 app.listen(port, () => console.log(`Servidor en http://localhost:${port}`));
-
-
-
