@@ -67,16 +67,14 @@ header{
   color:#fff; padding:12px 18px; display:flex; align-items:center; gap:12px
 }
 header .brand{display:flex; align-items:center; gap:12px; font-weight:800}
-header img{height:36px; width:auto; border-radius:6px; background:#fff}
-header nav{margin-left:auto; display:flex; gap:18px}
-header a{color:#fff; text-decoration:none; font-weight:600; opacity:.9}
-header a:hover{opacity:1}
-
-.main{max-width:780px; margin:28px auto; padding:0 16px}
-.card{
-  background:#fff; border-radius:16px; box-shadow:0 18px 40px rgba(0,0,0,.08);
-  overflow:hidden
+header .brand-logo{
+  height:40px; width:auto;
+  background:#fff;                 
+  padding:6px 8px;               
+  border-radius:12px;             
+  box-shadow:0 0 0 2px rgba(255,255,255,.45), 0 6px 16px rgba(0,0,0,.15);
 }
+
 .status{
   background:${badge}; color:#fff; padding:18px; font-size:20px; font-weight:800; text-align:center
 }
@@ -95,13 +93,17 @@ header a:hover{opacity:1}
 <body>
 <header>
   <div class="brand">
-    <img src="${process.env.LOGO_URL || 'https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png'}" alt="ULDC">
+   <img class="brand-logo"
+     src="${process.env.LOGO_URL || 'https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png'}"
+     alt="ULDC">
+
     <div>Universidad Escuela Libre de Derecho</div>
   </div>
-  <nav>
-    <a href="/">Inicio</a>
-    <a href="/validar">Verificar otro</a>
-  </nav>
+  <nav class="navlinks">
+  <a href="/validar">Verificar</a>
+  <a href="https://www.escuelalibre.cr" target="_blank" rel="noopener">Sitio ULDC</a>
+</nav>
+
 </header>
 
 <main class="main">
@@ -134,7 +136,8 @@ function guard(handler) {
   };
 }
 
-app.get('/', (_req, res) => res.send('OK'));
+app.get('/', (_req, res) => res.redirect(302, '/validar'));
+
 
 // ?id=ULDC-2025-000200
 app.get('/validar', guard(async (req, res) => {
