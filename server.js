@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 
 let col;
 
-// Conexión a Mongo con reintento (no mata el proceso en Render)
+// Conexión a Mongo con reintento
 const client = new MongoClient(uri, { serverSelectionTimeoutMS: 10000 });
 async function initMongo() {
   try {
@@ -26,16 +26,11 @@ async function initMongo() {
 }
 initMongo();
 
-// ---------- UI (estilo formal, info centrada, paleta ULDC) ----------
+/* ---------- UI ---------- */
 function pageResult(doc, codeBuscado) {
   const COLORS = {
-    vino: '#49132C',
-    vino2: '#942150',
-    azul: '#232673',
-    amarillo: '#C8900E',
-    ok: '#198754',
-    bad: '#dc3545',
-    bg: '#f5f6fa'
+    vino: '#49132C', vino2: '#942150', azul: '#232673', amarillo: '#C8900E',
+    ok: '#198754', bad: '#dc3545', bg: '#f5f6fa'
   };
 
   const isValid = !!doc && doc.status === 'valido';
@@ -53,8 +48,9 @@ function pageResult(doc, codeBuscado) {
   const folio  = doc?.folio ?? '—';
   const upd    = doc?.last_update ? new Date(doc.last_update).toLocaleString('es-CR') : '—';
 
-  const LOGO = process.env.LOGO_URL
-    || 'https://upload.wikimedia.org/wikipedia/commons/8/89/OOjs_UI_icon_article-ltr.svg';
+  // Logo blanco oficial (clickeable a uescuelalibre.cr)
+  const LOGO = 'https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png';
+  const SITE = 'https://uescuelalibre.cr/';
 
   return `<!doctype html>
 <html lang="es">
@@ -69,22 +65,13 @@ function pageResult(doc, codeBuscado) {
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text)}
-/* Encabezado */
 .topbar{position:sticky;top:0;z-index:10;background:linear-gradient(90deg,var(--vino),var(--azul));color:#fff}
 .nav{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:14px;height:68px;padding:0 16px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:800}
-.brand-logo{
-  height:40px;width:auto;
-  background:#232673; /* placa oscura para logos claros */
-  padding:6px 10px;border-radius:12px;
-  box-shadow:0 0 0 2px rgba(255,255,255,.35), 0 8px 18px rgba(0,0,0,.15);
-}
-.navlinks{margin-left:auto;display:flex;gap:18px}
-.navlinks a{color:#fff;text-decoration:none;opacity:.95}
-.navlinks a:hover{opacity:1;text-decoration:underline}
+.brand-logo{height:40px;width:auto;display:block}    /* SIN fondo/placa */
 .brandbar{height:4px;background:linear-gradient(90deg,var(--amarillo),var(--vino2),var(--azul))}
+.navlinks{margin-left:auto;display:flex;gap:18px}    /* vacío: sin enlaces */
 
-/* Cuerpo centrado y formal */
 .main{max-width:760px;margin:28px auto;padding:0 16px}
 .card{background:var(--card);border-radius:18px;box-shadow:0 22px 48px rgba(0,0,0,.10);overflow:hidden}
 .status{background:${badge};color:#fff;text-align:center;padding:18px;font-weight:800;font-size:20px}
@@ -97,8 +84,6 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 .meta{margin-top:8px;color:var(--muted);font-size:12px}
 .badge-soft{display:inline-block;background:#fafbff;border:1px solid #edf0f6;border-radius:999px;padding:6px 10px;font-size:12px;color:#3b4251}
 .footer{padding:14px;text-align:center;color:#9aa1af;font-size:12px}
-.btn{display:inline-block;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;text-decoration:none}
-.btn-outline{background:#fff;color:var(--azul);outline:2px solid var(--azul)}
 </style>
 </head>
 <body>
@@ -106,12 +91,12 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 <header class="topbar">
   <div class="nav">
     <div class="brand">
-      <img class="brand-logo" src="${LOGO}" alt="ULDC">
+      <a href="${SITE}" target="_blank" rel="noopener" aria-label="Ir al sitio ULDC">
+        <img class="brand-logo" src="${LOGO}" alt="ULDC">
+      </a>
       <div>Universidad Escuela Libre de Derecho</div>
     </div>
-    <nav class="navlinks">
-      <a href="https://www.escuelalibre.cr" target="_blank" rel="noopener">Sitio ULDC</a>
-    </nav>
+    <nav class="navlinks"><!-- sin enlaces --></nav>
   </div>
   <div class="brandbar"></div>
 </header>
@@ -125,21 +110,12 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         <div class="row"><div class="k">Cédula</div><div class="v">${cedula}</div></div>
         <div class="row"><div class="k">Certificado / Taller</div><div class="v">${cert}</div></div>
       </div>
-
       <div class="hr"></div>
-
       <div class="kv">
         <div class="row"><div class="k">Fecha de emisión</div><div class="v">${fecha}</div></div>
         <div class="row"><div class="k">Folio</div><div class="v">${folio}</div></div>
       </div>
-
-      <div class="meta">
-        <span class="badge-soft">Última actualización: ${upd}</span>
-      </div>
-
-      <div style="margin-top:14px">
-        <a class="btn btn-outline" href="https://www.escuelalibre.cr" target="_blank" rel="noopener">Ir al sitio ULDC</a>
-      </div>
+      <div class="meta"><span class="badge-soft">Última actualización: ${upd}</span></div>
     </div>
     <div class="footer">© Universidad Escuela Libre de Derecho — Verificación de títulos</div>
   </div>
@@ -150,8 +126,8 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 }
 
 function pageForm() {
-  const LOGO = process.env.LOGO_URL
-    || 'https://upload.wikimedia.org/wikipedia/commons/8/89/OOjs_UI_icon_article-ltr.svg';
+  const LOGO = 'https://sp-ao.shortpixel.ai/client/to_auto,q_glossy,ret_img,w_600/https://uescuelalibre.cr/wp-content/uploads/2020/03/Logo-blanco.png';
+  const SITE = 'https://uescuelalibre.cr/';
   return `<!doctype html>
 <html lang="es">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -163,11 +139,10 @@ function pageForm() {
 .topbar{background:linear-gradient(90deg,var(--vino),var(--azul));color:#fff}
 .nav{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:14px;height:68px;padding:0 16px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:800}
-.brand-logo{height:40px;width:auto;background:#232673;padding:6px 10px;border-radius:12px;box-shadow:0 0 0 2px rgba(255,255,255,.35), 0 8px 18px rgba(0,0,0,.15)}
-.navlinks{margin-left:auto;display:flex;gap:18px}
-.navlinks a{color:#fff;text-decoration:none;opacity:.95}
-.navlinks a:hover{opacity:1;text-decoration:underline}
+.brand-logo{height:40px;width:auto;display:block}   /* sin placa */
 .brandbar{height:4px;background:linear-gradient(90deg,var(--amarillo),#942150,var(--azul))}
+.navlinks{margin-left:auto;display:flex;gap:18px}   /* sin enlaces */
+
 .wrap{max-width:760px;margin:28px auto;padding:0 16px}
 .card{background:#fff;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.08);padding:22px;text-align:center}
 label{display:block;margin:6px 0 8px;color:#475467;font-size:14px}
@@ -179,12 +154,12 @@ input{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;f
 <header class="topbar">
   <div class="nav">
     <div class="brand">
-      <img class="brand-logo" src="${LOGO}" alt="ULDC">
+      <a href="${SITE}" target="_blank" rel="noopener" aria-label="Ir al sitio ULDC">
+        <img class="brand-logo" src="${LOGO}" alt="ULDC">
+      </a>
       <div>Universidad Escuela Libre de Derecho</div>
     </div>
-    <nav class="navlinks">
-      <a href="https://www.escuelalibre.cr" target="_blank" rel="noopener">Sitio ULDC</a>
-    </nav>
+    <nav class="navlinks"><!-- sin enlaces --></nav>
   </div>
   <div class="brandbar"></div>
 </header>
@@ -211,7 +186,7 @@ input{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;f
 </html>`;
 }
 
-// Middleware guard (si Mongo aún conecta)
+/* Guard mientras conecta Mongo */
 function guard(handler) {
   return async (req, res) => {
     if (!col) return res.status(503).send('Servicio iniciando, intenta en unos segundos…');
@@ -219,10 +194,9 @@ function guard(handler) {
   };
 }
 
-// ---------- RUTAS ----------
-app.get('/', (_req, res) => res.redirect(302, '/validar')); // sin "OK"
+/* Rutas */
+app.get('/', (_req, res) => res.redirect(302, '/validar'));
 
-// /validar (si no hay id, muestra formulario centrado)
 app.get('/validar', guard(async (req, res) => {
   const id = (req.query.id || '').trim();
   if (!id) return res.status(200).send(pageForm());
@@ -230,7 +204,6 @@ app.get('/validar', guard(async (req, res) => {
   res.status(doc && doc.status === 'valido' ? 200 : 404).send(pageResult(doc, id));
 }));
 
-// /v/:id (para QR)
 app.get('/v/:id', guard(async (req, res) => {
   const id = (req.params.id || '').trim();
   const doc = await col.findOne({ code: id }, { projection: { _id: 0 } });
